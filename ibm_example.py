@@ -14,19 +14,55 @@ It does NOT implement actual quantum networking (which IBM doesn't support).
 
 from ibm_hardware import IBMQuantumHardwareValidator, plot_fidelity_comparison, save_validation_report
 import sys
+import os
 
 # ============================================================================
 # Configuration
 # ============================================================================
 
-# IBM Quantum API Token
-# Get your token from: https://quantum.ibm.com/account
-IBM_API_TOKEN = "QQ5jnejkbzeJDKr_dXvghu-jfAin88S2hRCQAMCxEG1x"
+# Try to import from config file, fall back to environment variable or prompt
+try:
+    from ibm_config import (
+        IBM_API_TOKEN,
+        IBM_HUB,
+        IBM_GROUP,
+        IBM_PROJECT,
+        DEFAULT_SHOTS,
+        USE_REAL_HARDWARE,
+        MIN_QUBITS
+    )
+    print("✓ Loaded configuration from ibm_config.py")
+except ImportError:
+    print("⚠️  ibm_config.py not found. Checking environment variables...")
+    
+    # Try environment variable
+    IBM_API_TOKEN = os.environ.get('IBM_QUANTUM_TOKEN')
+    
+    if not IBM_API_TOKEN:
+        print("\n" + "="*70)
+        print("IBM Quantum API Token Required")
+        print("="*70)
+        print("\nTo get your token:")
+        print("1. Go to https://quantum.ibm.com/account")
+        print("2. Click 'Copy token'")
+        print("3. Create ibm_config.py from ibm_config_template.py")
+        print("   OR set environment variable: export IBM_QUANTUM_TOKEN='your_token'")
+        print("\nFor security, the token is NOT hardcoded in this script.")
+        print("="*70)
+        sys.exit(1)
+    
+    # Default values
+    IBM_HUB = "ibm-q"
+    IBM_GROUP = "open"
+    IBM_PROJECT = "main"
+    DEFAULT_SHOTS = 4096
+    USE_REAL_HARDWARE = False
+    MIN_QUBITS = 5
+    print("✓ Using environment variable IBM_QUANTUM_TOKEN")
 
-# Execution parameters
-SHOTS = 4096  # Number of measurement shots
-USE_REAL_HARDWARE = False  # Set to True to use real hardware (costs queue time)
-MIN_QUBITS = 5  # Minimum qubits required
+# Use configuration
+SHOTS = DEFAULT_SHOTS
+# Execution parameters can be overridden here if needed
 
 
 # ============================================================================
@@ -50,9 +86,9 @@ def main():
     try:
         validator = IBMQuantumHardwareValidator(
             api_token=IBM_API_TOKEN,
-            hub="ibm-q",
-            group="open",
-            project="main"
+            hub=IBM_HUB,
+            group=IBM_GROUP,
+            project=IBM_PROJECT
         )
     except Exception as e:
         print(f"✗ Failed to initialize: {e}")

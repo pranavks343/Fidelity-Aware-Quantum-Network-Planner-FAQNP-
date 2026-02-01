@@ -3,3 +3,28 @@
 __pycache__/
 *venv*/
 .iquhack_profile.json
+
+# IBM Quantum API credentials
+ibm_config.py
+ibm_config.json
+.ibm_quantum_token
+*.token
+
+# Validation results and reports
+ibm_validation_report.json
+fidelity_comparison.png
+*_validation_report.json
+*_comparison.png
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Python cache
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment variables
+.env
+.env.local
