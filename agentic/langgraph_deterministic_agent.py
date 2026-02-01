@@ -1,19 +1,16 @@
 """
-LangGraph-Based Deterministic Agent for Quantum Network Optimization
+LangGraph agent for quantum network optimization.
 
-This module replaces the monolithic agent logic with a LangGraph orchestration framework.
-The agent uses a state machine with explicit decision nodes and control flow.
+Orchestrates edge claiming decisions using a state machine with explicit nodes
+for each decision step. Deterministic (no LLM calls) but modular enough to
+debug individual decisions.
 
-Key Features:
-- Deterministic decision-making (no LLM calls)
-- Modular node-based architecture
-- Explicit state transitions
-- Reuses existing strategy.py logic
-- Clear control flow for debugging
+Flow:
+  EdgeSelection → ResourceAllocation → DistillationStrategy → SimulationCheck
+  → Execution → UpdateState → (loop or stop)
 
-Architecture:
-    State → EdgeSelection → ResourceAllocation → DistillationStrategy 
-         → SimulationCheck → Execution → UpdateState → (loop or terminate)
+Each node returns an immutable state update. The graph handles routing based
+on the 'action' field (continue/stop/skip).
 """
 
 from typing import Dict, Any, List, Optional, Tuple, TypedDict, Literal

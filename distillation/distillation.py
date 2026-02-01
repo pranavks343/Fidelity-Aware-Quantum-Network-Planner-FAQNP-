@@ -1,8 +1,8 @@
 """
-Entanglement Distillation Protocols
+Distillation protocols (BBPSSW, DEJMPS).
 
-Implements BBPSSW and DEJMPS distillation circuits for quantum networking.
-All circuits use LOCC (Local Operations and Classical Communication) constraints.
+All circuits respect LOCC: two-qubit gates stay within Alice or Bob's lab,
+no entangling operations across the network boundary. Post-selection via flag bit.
 """
 
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
@@ -12,25 +12,19 @@ import numpy as np
 
 def create_bbpssw_circuit(num_bell_pairs: int) -> Tuple[QuantumCircuit, int]:
     """
-    BBPSSW (Bennett-Brassard-Popescu-Schumacher-Smolin-Wootters) distillation.
+    BBPSSW distillation circuit.
     
-    Protocol:
-    - Uses bilateral CNOT operations on pairs of Bell pairs
-    - Measures ancilla qubits to detect errors
-    - Post-selects on measurement outcomes
-    - Best for depolarizing noise
+    Uses bilateral CNOTs between a target pair and ancilla pairs to detect
+    errors. Measures ancillas and post-selects on outcomes. Works well for
+    depolarizing noise.
     
-    Args:
-        num_bell_pairs: Number of raw Bell pairs (2-8)
-        
-    Returns:
-        (circuit, flag_bit): Circuit with 2N qubits and the flag bit for post-selection
-        
-    Qubit layout:
-        Alice: qubits 0 to N-1
-        Bob: qubits N to 2N-1
-        Bell pair k: (qubit k, qubit 2N-1-k)
-        Target pair: (qubit N-1, qubit N)
+    Qubit layout (game convention):
+      Alice: 0 to N-1
+      Bob: N to 2N-1
+      Pair k: (qubit k, qubit 2N-1-k)
+      Target: (N-1, N)
+    
+    Returns (circuit, flag_bit) where flag_bit is the XOR of ancilla measurements.
     """
     if num_bell_pairs < 2:
         raise ValueError("BBPSSW requires at least 2 Bell pairs")

@@ -1,33 +1,30 @@
 """
-Edge Selection and Budget Management Strategy
+Edge selection and budget management.
 
-Implements intelligent decision-making for quantum network optimization.
-
-Configuration Constants:
-These values are tuned for the game's parameter ranges and may need adjustment
-if game mechanics change.
+Scores edges based on utility, difficulty, cost, and success probability.
+Constants are tuned for the game's mechanics—adjust if rules change.
 """
 
 from typing import Dict, List, Any, Optional, Tuple
 import numpy as np
 from dataclasses import dataclass
 
-# Game parameter assumptions
-DIFFICULTY_SCALE = 10.0  # Game uses 1-10 difficulty scale
-THRESHOLD_MIN = 0.5      # Minimum fidelity threshold
-THRESHOLD_MAX = 0.99     # Maximum fidelity threshold
+# Game constraints
+DIFFICULTY_SCALE = 10.0
+THRESHOLD_MIN = 0.5
+THRESHOLD_MAX = 0.99
 
-# Heuristic constants for estimation
-BASE_SUCCESS_RATE = 0.7  # Empirical estimate: ~70% pass rate per measurement
-MIN_SUCCESS_PROB = 0.1   # Minimum acceptable success probability
-MAX_SUCCESS_PROB = 0.95  # Maximum realistic success probability
+# Heuristics (based on observed distillation behavior)
+BASE_SUCCESS_RATE = 0.7  # ~70% pass rate per ancilla measurement
+MIN_SUCCESS_PROB = 0.1
+MAX_SUCCESS_PROB = 0.95
 
-# Cost estimation parameters
-MIN_BELL_PAIRS = 2       # Minimum pairs for distillation
-MAX_BELL_PAIRS = 8       # Maximum pairs allowed by game
-BASE_COST = 2.0          # Base bell pair cost
-DIFFICULTY_COST_FACTOR = 3.0    # Cost scaling with difficulty
-THRESHOLD_COST_FACTOR = 2.0     # Cost scaling with threshold
+# Cost estimation
+MIN_BELL_PAIRS = 2
+MAX_BELL_PAIRS = 8  # Game limit
+BASE_COST = 2.0
+DIFFICULTY_COST_FACTOR = 3.0  # Higher difficulty → more pairs needed
+THRESHOLD_COST_FACTOR = 2.0   # Higher threshold → more pairs needed
 
 
 @dataclass
@@ -46,15 +43,11 @@ class EdgeScore:
 
 class EdgeSelectionStrategy:
     """
-    Intelligent edge selection using multi-factor scoring.
+    Multi-factor edge scoring.
     
-    Factors considered:
-    - Utility qubits of target node
-    - Edge difficulty rating
-    - Fidelity threshold
-    - Expected bell-pair cost
-    - Expected success probability
-    - Current budget constraints
+    Balances utility (reward), difficulty (effort), cost (Bell pairs), and
+    success probability. Weights are tunable—aggressive strategies increase
+    utility_weight, conservative strategies increase cost_weight.
     """
     
     def __init__(
@@ -64,15 +57,6 @@ class EdgeSelectionStrategy:
         cost_weight: float = 0.3,
         success_prob_weight: float = 0.4
     ):
-        """
-        Initialize strategy with tunable weights.
-        
-        Args:
-            utility_weight: Weight for node utility qubits
-            difficulty_weight: Weight for edge difficulty (negative)
-            cost_weight: Weight for expected cost (negative)
-            success_prob_weight: Weight for success probability
-        """
         self.utility_weight = utility_weight
         self.difficulty_weight = difficulty_weight
         self.cost_weight = cost_weight

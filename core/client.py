@@ -1,5 +1,11 @@
 """
-GameClient - Player interface for the quantum networking game server.
+HTTP client for the quantum networking game server.
+
+Handles player registration, edge claiming, and status queries. The server
+provides a REST API that returns game state (graph, budget, score) and accepts
+circuit submissions for edge claims.
+
+Graph data is cached since it doesn't change during gameplay.
 """
 
 from typing import Any, Dict, List, Optional, Tuple
@@ -8,7 +14,13 @@ from qiskit import QuantumCircuit, qasm3
 
 
 class GameClient:
-    """Client for interacting with the game server API."""
+    """
+    Game server interface.
+    
+    Manages session state (player_id, token) and provides methods for all
+    game actions. Error handling returns dicts instead of raising exceptions
+    so agents can decide how to respond to failures.
+    """
 
     def __init__(self, base_url: str = "https://demo-entanglement-distillation-qfhvrahfcq-uc.a.run.app", api_token: Optional[str] = None):
         self.base_url = base_url.rstrip("/")
@@ -24,7 +36,7 @@ class GameClient:
         return headers
 
     def _get(self, path: str) -> Dict[str, Any]:
-        """GET request with error handling."""
+        """GET with timeout and error dict return (no exceptions)."""
         try:
             r = requests.get(f"{self.base_url}{path}", headers=self._headers(), timeout=120)
             r.raise_for_status()
@@ -39,7 +51,7 @@ class GameClient:
             return {"error": f"Request failed: {str(e)}"}
 
     def _post(self, path: str, payload: Dict[str, Any], require_auth: bool = True) -> Dict[str, Any]:
-        """POST request with error handling."""
+        """POST with auth check and error dict return."""
         if require_auth and not self.api_token:
             return {"ok": False, "error": {"code": "NO_TOKEN", "message": "No API token. Register first."}}
         try:

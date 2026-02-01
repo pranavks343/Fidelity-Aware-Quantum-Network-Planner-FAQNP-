@@ -1,198 +1,130 @@
 # Quantum Network Optimization - IonQ Hackathon 2026
 
-An autonomous agent system for quantum entanglement distillation and network optimization using LangGraph orchestration.
+Autonomous agent for quantum entanglement distillation in a competitive network game.
 
-## 🎯 Project Overview
+## Overview
 
-This project implements an intelligent agent that competes in a quantum networking game by:
-- Selecting optimal edges to claim in a quantum network
-- Designing LOCC-compliant distillation circuits (BBPSSW, DEJMPS)
-- Managing Bell pair budgets strategically
-- Maximizing network utility through adaptive decision-making
+Built for the IonQ 2026 hackathon, this agent competes in a quantum networking game where players claim edges by distilling noisy Bell pairs into high-fidelity entangled states. The agent uses adaptive strategies to maximize network utility while managing a limited Bell pair budget.
 
-## 🏗️ Architecture
+**Core capabilities:**
+- Edge selection based on utility, difficulty, and expected ROI
+- LOCC-compliant distillation circuits (BBPSSW, DEJMPS protocols)
+- Adaptive resource allocation with risk management
+- Local simulation to avoid wasting budget on low-probability attempts
+
+## Architecture
 
 ```
 2026-IonQ/
-├── config/          # Configuration files (IBM Quantum API, etc.)
-├── core/            # Core game client and executor
-├── distillation/    # Quantum circuit generation and simulation
-├── strategy/        # Decision-making strategies and legacy agent
-├── agentic/         # LangGraph-based autonomous agent (recommended)
-├── hardware/        # IBM Quantum hardware integration (optional)
-├── visualization/   # Network visualization tools
+├── config/          # API tokens and settings
+├── core/            # Game client and orchestration
+├── distillation/    # Circuit generation and local simulation
+├── strategy/        # Edge scoring and budget management
+├── agentic/         # LangGraph agent (recommended)
+├── hardware/        # IBM Quantum validation (optional)
+├── visualization/   # Network graphs
 ├── examples/        # Usage examples
-├── notebooks/       # Jupyter notebooks for demos
-├── docs/            # Comprehensive documentation
+├── notebooks/       # Demos
+├── docs/            # Documentation
 └── tests/           # Test suites
 ```
 
-## 🚀 Quick Start
-
-### Installation
+## Quick Start
 
 ```bash
-# Clone the repository
 cd 2026-IonQ
-
-# Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Basic Usage
-
-```python
-from core.client import GameClient
-from core.executor import GameExecutor
-
-# Create executor
-executor = GameExecutor("your_player_id", "YourName")
-
-# Run with LangGraph agent (recommended)
-summary = executor.run(
-    agent_type="default",
-    max_iterations=100,
-    use_langgraph=True
-)
-
-print(f"Final Score: {summary['final_score']}")
-print(f"Final Budget: {summary['final_budget']}")
-```
-
-### Running the LangGraph Agent
+**Run the agent:**
 
 ```bash
-# Direct execution
 python -m agentic.run_langgraph_agent --player-id YOUR_ID --name "Your Name"
-
-# With strategy preset
-python -m agentic.run_langgraph_agent --player-id YOUR_ID --strategy aggressive
-
-# Custom configuration
-python -m agentic.run_langgraph_agent --player-id YOUR_ID --min-reserve 15 --enable-simulation
 ```
 
-## 📚 Documentation
+**Or use programmatically:**
 
-- **[LangGraph Quickstart](docs/LANGGRAPH_QUICKSTART.md)** - Get started with the LangGraph agent
-- **[Integration Guide](docs/LANGGRAPH_INTEGRATION_GUIDE.md)** - Detailed architecture and usage
-- **[Agent Comparison](docs/AGENT_ARCHITECTURE_COMPARISON.md)** - Legacy vs LangGraph agent
-- **[All Issues Resolved](docs/ALL_ISSUES_RESOLVED.md)** - Recent fixes and improvements
+```python
+from core.executor import GameExecutor
 
-## 🧪 Testing
+executor = GameExecutor("your_player_id", "YourName")
+summary = executor.run(agent_type="default", use_langgraph=True)
+```
+
+**Strategy presets:**
+- `default`: Balanced approach
+- `aggressive`: Higher risk, targets high-utility edges
+- `conservative`: Safer plays, maintains larger budget reserve
+
+## Documentation
+
+- [LangGraph Quickstart](docs/LANGGRAPH_QUICKSTART.md) - Agent setup and usage
+- [Integration Guide](docs/LANGGRAPH_INTEGRATION_GUIDE.md) - Architecture details
+- [Agent Comparison](docs/AGENT_ARCHITECTURE_COMPARISON.md) - Legacy vs LangGraph
+
+## Testing
 
 ```bash
-# Run all tests
 python -m pytest tests/
-
-# Run specific test suites
-python tests/test_langgraph_agent.py
-python tests/test_distillation.py
-python tests/test_logic.py
 ```
 
-## 🔑 Key Features
+Individual test suites available in `tests/` directory.
 
-### LangGraph Agent (Recommended)
-- ✅ Modular node-based architecture
-- ✅ Explicit state transitions
-- ✅ Deterministic decision-making
-- ✅ Comprehensive error handling
-- ✅ 90% test coverage
+## Key Features
 
-### Quantum Distillation
-- ✅ BBPSSW protocol implementation
-- ✅ DEJMPS protocol implementation
-- ✅ LOCC compliance verification
-- ✅ Local fidelity simulation
-- ✅ Success probability estimation
+**LangGraph Agent** (recommended)
+- Modular node-based architecture for better debugging
+- Deterministic decisions (no LLM calls)
+- Explicit state transitions
+- 90% test coverage
 
-### Strategy & Budget Management
-- ✅ Multi-factor edge scoring (utility, difficulty, cost, ROI)
-- ✅ Adaptive resource allocation
-- ✅ Risk-adjusted decision making
-- ✅ Budget constraint enforcement
+**Distillation Protocols**
+- BBPSSW and DEJMPS implementations
+- LOCC-compliant (no entangling gates across Alice/Bob boundary)
+- Local simulation to estimate fidelity before submission
+- Post-selection via flag bit
 
-### IBM Quantum Integration (Optional)
-- ✅ Real hardware validation
-- ✅ Noise model simulation
-- ✅ Hardware profile support (Eagle, IonQ, Rigetti)
-- ✅ Safe defaults (simulation mode)
+**Strategy**
+- Multi-factor edge scoring: utility, difficulty, cost, success probability
+- Adaptive resource allocation (increases Bell pairs on retry)
+- Risk-adjusted budget management
+- Configurable reserve thresholds
 
-## 📊 Project Status
+**IBM Quantum** (optional)
+- Hardware validation for distillation circuits
+- Noise model simulation
+- Defaults to simulation mode (safe for testing)
 
-**Status:** ✅ Production Ready  
-**Grade:** A (95/100)  
-**Test Coverage:** 90%  
-**LangGraph Compliance:** ✅ Verified
+## How It Works
 
-## 🛠️ Development
+**Entanglement Distillation**  
+The game provides noisy Bell pairs on each edge. Players design circuits using only local operations (gates within Alice or Bob's lab) and classical communication to distill these into high-fidelity pairs. The challenge is meeting the fidelity threshold while maximizing success probability.
 
-### Project Structure
+**LOCC Constraints**  
+Two-qubit gates can't span the Alice/Bob boundary (no real entangling operations across the network). Measurements can be shared classically. Post-selection uses a flag bit to keep only successful outcomes.
 
-- **config/** - API tokens, hardware settings
-- **core/** - Game client, executor, session management
-- **distillation/** - Circuit generation, simulation, LOCC protocols
-- **strategy/** - Edge selection, budget management, legacy agent
-- **agentic/** - LangGraph agent (modular, recommended)
-- **hardware/** - IBM Quantum integration (optional)
-- **visualization/** - Network graph visualization
-- **tests/** - Comprehensive test suites
+**Agent Strategy**  
+The LangGraph agent scores edges based on utility, difficulty, and expected cost. It adaptively allocates Bell pairs (more on retries) and uses local simulation to avoid wasting budget on low-probability attempts. The agent is deterministic—no LLM calls, just heuristics tuned for the game mechanics.
 
-### Import Paths
+## Development
 
-After reorganization, use these import patterns:
+Import paths after reorganization:
 
 ```python
 from core.client import GameClient
-from core.executor import GameExecutor
-from strategy.strategy import EdgeSelectionStrategy, BudgetManager
-from distillation.distillation import create_bbpssw_circuit, create_dejmps_circuit
-from distillation.simulator import DistillationSimulator
+from strategy.strategy import EdgeSelectionStrategy
+from distillation.distillation import create_bbpssw_circuit
 from agentic.langgraph_deterministic_agent import LangGraphQuantumAgent
-from hardware.ibm_hardware import IBMHardwareAdapter
-from visualization.visualization import visualize_network
 ```
 
-## 🎓 Concepts
+See `docs/` for architecture details and migration guides.
 
-### Entanglement Distillation
-The process of converting multiple low-fidelity Bell pairs into fewer high-fidelity Bell pairs using Local Operations and Classical Communication (LOCC).
+## License
 
-### LOCC Constraints
-- **Local operations only:** Two-qubit gates cannot cross Alice/Bob boundary
-- **Classical communication allowed:** Measurements can be shared
-- **Post-selection:** Flag bit determines success
-
-### Agentic AI
-The LangGraph agent acts as a control plane, orchestrating decisions without executing quantum operations directly. It uses deterministic heuristics for edge selection, resource allocation, and protocol choice.
-
-## 🏆 Hackathon Ready
-
-This project is fully prepared for hackathon deployment:
-- ✅ All critical bugs fixed
-- ✅ Comprehensive documentation
-- ✅ Production-grade error handling
-- ✅ Backward compatible
-- ✅ Well-tested (90% coverage)
-
-## 📝 License
-
-MIT License - See LICENSE file for details
-
-## 🤝 Contributing
-
-This is a hackathon project. For questions or improvements, please open an issue.
-
-## 📧 Contact
-
-For questions about this project, please refer to the documentation in the `docs/` directory.
+MIT
 
 ---
 
-**Last Updated:** February 1, 2026  
-**Version:** 2.0.0 (Post-reorganization)
+Built for IonQ Hackathon 2026
