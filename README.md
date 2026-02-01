@@ -49,12 +49,22 @@ The notebook walks you through registration, gameplay, and circuit design.
 
 ```
 iQuHack2026/
-├── demo.ipynb         # Interactive tutorial - START HERE
-├── client.py          # GameClient class (API wrapper)
-├── visualization.py   # GraphTool class (graph rendering)
-├── game_handbook.md   # Detailed game rules
-├── requirements.txt   # Python dependencies
-└── README.md          # This file
+├── demo.ipynb                  # Interactive tutorial - START HERE
+├── client.py                   # GameClient class (API wrapper)
+├── visualization.py            # GraphTool class (graph rendering)
+├── distillation.py             # Distillation protocol implementations
+├── simulator.py                # Local circuit simulation
+├── game_handbook.md            # Detailed game rules
+├── requirements.txt            # Python dependencies
+├── README.md                   # This file
+│
+├── IBM QUANTUM HARDWARE INTEGRATION (NEW!)
+├── ibm_hardware.py             # IBM Quantum hardware validator
+├── ibm_example.py              # Example usage script
+├── ibm_hardware_demo.ipynb     # Interactive hardware demo
+├── IBM_HARDWARE_README.md      # Detailed hardware documentation
+├── NISQ_LIMITATIONS.md         # Reality check on quantum hardware
+└── test_ibm_hardware.py        # Test suite
 ```
 
 ---
@@ -132,6 +142,46 @@ Base URL: `https://demo-entanglement-distillation-qfhvrahfcq-uc.a.run.app`
 **"Invalid token"**: Re-register or use saved session token
 
 **Visualization not showing**: Install matplotlib: `pip install matplotlib`
+
+---
+
+## IBM Quantum Hardware Integration (NEW!)
+
+### 🚀 Real Quantum Hardware Validation
+
+This project now includes **IBM Quantum hardware integration** for validating entanglement distillation circuits on real quantum computers!
+
+**Quick Start:**
+```bash
+# Install IBM Quantum dependencies
+pip install qiskit-ibm-runtime
+
+# Run example (uses simulator by default)
+python ibm_example.py
+
+# Or explore interactively
+jupyter notebook ibm_hardware_demo.ipynb
+```
+
+**Features:**
+- ✅ Hardware-compatible BBPSSW distillation circuits
+- ✅ Automatic backend selection (lowest CX error, shortest queue)
+- ✅ Real hardware execution via Qiskit Runtime
+- ✅ Bell state fidelity estimation from measurements
+- ✅ Comparison with noisy simulation
+- ✅ Comprehensive validation reports
+
+**Documentation:**
+- `IBM_HARDWARE_README.md` - Complete hardware integration guide
+- `NISQ_LIMITATIONS.md` - Reality check on quantum hardware capabilities
+- `ibm_hardware_demo.ipynb` - Interactive tutorial
+
+**Important Notes:**
+- ⚠️ IBM Quantum does NOT support real quantum networking
+- ⚠️ This is a HARDWARE-VALIDATION PROTOTYPE
+- ⚠️ Game server remains simulated (hardware is for validation only)
+
+See `IBM_HARDWARE_README.md` for detailed documentation.
 
 ---
 

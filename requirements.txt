@@ -1,5 +1,6 @@
 qiskit>=1.0.0
 qiskit-aer>=0.13.0
+qiskit-ibm-runtime>=0.20.0
 networkx>=3.0
 requests>=2.31.0
 ipykernel>=6.0
